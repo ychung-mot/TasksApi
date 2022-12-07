@@ -123,7 +123,7 @@ namespace TasksApi.Services
                 };
             }
 
-            if (signupRequest.Password.Length <= 7) // This can be more complicated than only length, you can check on alphanumeric and or special characters
+            if (signupRequest.Password.Length <= 3) // This can be more complicated than only length, you can check on alphanumeric and or special characters
             {
                 return new SignupResponse
                 {

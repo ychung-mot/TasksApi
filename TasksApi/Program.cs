@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using TasksApi;
 using TasksApi.Helpers;
 using TasksApi.Interfaces;
@@ -53,6 +54,13 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ITaskService, TaskService>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<TasksDbContext>();
+    dataContext.Database.Migrate();
+}
+
 app.UseCors(AllowAllHeadersPolicy);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
