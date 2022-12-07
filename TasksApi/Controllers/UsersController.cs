@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TasksApi.Interfaces;
 using TasksApi.Requests;
 using TasksApi.Responses;
+using TasksApi.Services;
 
 namespace TasksApi.Controllers
 {

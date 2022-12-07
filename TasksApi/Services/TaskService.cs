@@ -1,9 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TasksApi.Interfaces;
 using TasksApi.Responses;
 
 namespace TasksApi.Services
 {
+    public interface ITaskService
+    {
+        Task<GetTasksResponse> GetTasks(int userId);
+
+        Task<SaveTaskResponse> SaveTask(Task task);
+
+        Task<DeleteTaskResponse> DeleteTask(int taskId, int userId);
+    }
+
     public class TaskService : ITaskService
     {
         private readonly TasksDbContext tasksDbContext;

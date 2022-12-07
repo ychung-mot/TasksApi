@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using TasksApi;
 using TasksApi.Helpers;
-using TasksApi.Interfaces;
 using TasksApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,7 +40,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 ValidIssuer = TokenHelper.Issuer,
                 ValidAudience = TokenHelper.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(TokenHelper.Secret)),
-                ClockSkew = TimeSpan.Zero
+                LifetimeValidator = TokenLifetimeValidator.Validate,
             };
 
         });

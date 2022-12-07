@@ -10,7 +10,7 @@ namespace TasksApi.Helpers
         public const string Issuer = "http://codingsonata.com";
         public const string Audience = "http://codingsonata.com";
         public const string Secret = "p0GXO6VuVZLRPef0tyO9jCqK4uZufDa6LP4n8Gj+8hQPB30f94pFiECAnPeMi5N6VT3/uscoGH7+zJrv4AuuPg==";
-        public static async Task<string> GenerateAccessToken(int userId)
+        public static string GenerateAccessToken(int userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Convert.FromBase64String(Secret);
@@ -26,23 +26,44 @@ namespace TasksApi.Helpers
                 Subject = claimsIdentity,
                 Issuer = Issuer,
                 Audience = Audience,
-                Expires = DateTime.Now.AddMinutes(15),
+                Expires = DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = signingCredentials,
 
             };
-            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+            try
+            {
+                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                return tokenHandler.WriteToken(securityToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }            
 
-            return await System.Threading.Tasks.Task.Run(() => tokenHandler.WriteToken(securityToken));
         }
-        public static async Task<string> GenerateRefreshToken()
+        public static string GenerateRefreshToken()
         {
             var secureRandomBytes = new byte[32];
 
             using var randomNumberGenerator = RandomNumberGenerator.Create();
-            await System.Threading.Tasks.Task.Run(() => randomNumberGenerator.GetBytes(secureRandomBytes));
+            randomNumberGenerator.GetBytes(secureRandomBytes);
 
             var refreshToken = Convert.ToBase64String(secureRandomBytes);
             return refreshToken;
+        }
+    }
+
+    public static class TokenLifetimeValidator
+    {
+        public static bool Validate(
+            DateTime? notBefore,
+            DateTime? expires,
+            SecurityToken tokenToValidate,
+            TokenValidationParameters @param
+        )
+        {
+            return (expires != null && expires > DateTime.UtcNow);
         }
     }
 }

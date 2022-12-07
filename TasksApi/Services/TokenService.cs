@@ -1,11 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TasksApi.Helpers;
-using TasksApi.Interfaces;
 using TasksApi.Requests;
 using TasksApi.Responses;
 
 namespace TasksApi.Services
 {
+    public interface ITokenService
+    {
+        Task<Tuple<string, string>> GenerateTokensAsync(int userId);
+        Task<ValidateRefreshTokenResponse> ValidateRefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
+        Task<bool> RemoveRefreshTokenAsync(User user);
+    }
+
     public class TokenService : ITokenService
     {
         
@@ -18,8 +24,8 @@ namespace TasksApi.Services
 
         public async Task<Tuple<string, string>> GenerateTokensAsync(int userId)
         {
-            var accessToken = await TokenHelper.GenerateAccessToken(userId);
-            var refreshToken = await TokenHelper.GenerateRefreshToken();
+            var accessToken = TokenHelper.GenerateAccessToken(userId);
+            var refreshToken = TokenHelper.GenerateRefreshToken();
 
             var userRecord = await tasksDbContext.Users.Include(o => o.RefreshTokens).FirstOrDefaultAsync(e => e.Id == userId);
 

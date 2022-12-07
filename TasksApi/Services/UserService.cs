@@ -1,11 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TasksApi.Helpers;
-using TasksApi.Interfaces;
 using TasksApi.Requests;
 using TasksApi.Responses;
 
 namespace TasksApi.Services
 {
+    public interface IUserService
+    {
+        Task<TokenResponse> LoginAsync(LoginRequest loginRequest);
+        Task<SignupResponse> SignupAsync(SignupRequest signupRequest);
+
+        Task<LogoutResponse> LogoutAsync(int userId);
+        Task<UserResponse> GetInfoAsync(int userId);
+    }
     public class UserService : IUserService
     {
         private readonly TasksDbContext tasksDbContext;
@@ -66,7 +73,7 @@ namespace TasksApi.Services
                 };
             }
 
-            var token = await System.Threading.Tasks.Task.Run(() => tokenService.GenerateTokensAsync(user.Id));
+            var token = await tokenService.GenerateTokensAsync(user.Id);
 
             return new TokenResponse
             {
